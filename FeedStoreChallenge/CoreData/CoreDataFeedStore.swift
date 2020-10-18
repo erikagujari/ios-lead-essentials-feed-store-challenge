@@ -15,11 +15,32 @@ public struct CoreDataFeedStore: FeedStore {
     }
     
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
+        guard let context = context,
+              let fetch = try? context.fetch(CoreDataFeed.fetchRequest()) as? [CoreDataFeed]
+        else {
+            completion(CoreDataError.deleteError)
+            return
+        }
+        fetch.forEach { feed in
+            context.delete(feed)
+        }
         
+        save(context: context, errorCompletion: completion)
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
+        guard let context = context
+        else {
+            completion(CoreDataError.insertionError)
+            return
+        }
         
+        let coreDataImages = feed.map { CoreDataFeedImageMapper.fromLocalFeedImage($0) }
+        let coreDataFeed = CoreDataFeed(context: context)
+        coreDataFeed.images = coreDataImages
+        coreDataFeed.timestamp = timestamp
+        
+        save(context: context, errorCompletion: completion)
     }
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
@@ -37,7 +58,7 @@ public struct CoreDataFeedStore: FeedStore {
             return
         }
         
-        completion(.found(feed: coreDataFeed.images.compactMap { $0.toLocalFeedImage() }, timestamp: coreDataFeed.timestamp))
+        completion(.found(feed: coreDataFeed.images.compactMap { CoreDataFeedImageMapper.toLocalFeedImage($0) }, timestamp: coreDataFeed.timestamp))
     }
 }
 
@@ -83,5 +104,14 @@ private extension CoreDataFeedStore {
                                      url: localFeedImage.url.absoluteString)
         }
     }
+    
+    func save(context: NSManagedObjectContext, errorCompletion: (Error?) -> Void) {
+        do {
+            try context.save()
+            errorCompletion(nil)
+        } catch {
+            print(error)
+            errorCompletion(error)
+        }
     }
 }
