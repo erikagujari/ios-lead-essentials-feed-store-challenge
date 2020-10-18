@@ -18,23 +18,23 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
     //  Repeat this process until all tests are passing.
     //
     //  ***********************
-
+    
 	func test_retrieve_deliversEmptyOnEmptyCache() {
 		let sut = makeSUT()
-
+        deleteCache(from: sut)
 		assertThatRetrieveDeliversEmptyOnEmptyCache(on: sut)
 	}
 
 	func test_retrieve_hasNoSideEffectsOnEmptyCache() {
 		let sut = makeSUT()
-
+        deleteCache(from: sut)
 		assertThatRetrieveHasNoSideEffectsOnEmptyCache(on: sut)
 	}
 
 	func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
-//		let sut = makeSUT()
-//
-//		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
+		let sut = makeSUT()
+
+		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
 	}
 
 	func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
