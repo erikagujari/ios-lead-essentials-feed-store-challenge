@@ -53,5 +53,25 @@ private extension CoreDataFeedStore {
     
     enum CoreDataError: Error {
         case retrieveError
+    struct CoreDataFeedImageMapper {
+        static func toLocalFeedImage(_ coreDataFeedImage: CoreDataFeedImage) -> LocalFeedImage? {
+            guard let id = coreDataFeedImage.id,
+                  let imageUrl = coreDataFeedImage.url,
+                  let uuid = UUID(uuidString: id),
+                  let url = URL(string: imageUrl)
+            else { return nil }
+            return LocalFeedImage(id: uuid,
+                                  description: coreDataFeedImage.imageDescription,
+                                  location: coreDataFeedImage.location,
+                                  url: url)
+        }
+        
+        static func fromLocalFeedImage(_ localFeedImage: LocalFeedImage) -> CoreDataFeedImage {
+            return CoreDataFeedImage(id: localFeedImage.id.uuidString,
+                                     imageDescription: localFeedImage.description,
+                                     location: localFeedImage.location,
+                                     url: localFeedImage.url.absoluteString)
+        }
+    }
     }
 }
