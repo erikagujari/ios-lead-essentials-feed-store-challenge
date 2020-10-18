@@ -53,6 +53,10 @@ private extension CoreDataFeedStore {
     
     enum CoreDataError: Error {
         case retrieveError
+        case insertionError
+        case deleteError
+    }
+    
     struct CoreDataFeedImageMapper {
         static func toLocalFeedImage(_ coreDataFeedImage: CoreDataFeedImage) -> LocalFeedImage? {
             guard let id = coreDataFeedImage.id,
