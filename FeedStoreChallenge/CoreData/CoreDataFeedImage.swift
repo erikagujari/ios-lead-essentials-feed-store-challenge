@@ -13,6 +13,13 @@ public class CoreDataFeedImage: NSObject, NSCoding {
     public let location: String?
     public let url: String?
     
+    public init(id: String?, imageDescription: String?, location: String?, url: String?) {
+        self.id = id
+        self.imageDescription = imageDescription
+        self.location = location
+        self.url = url
+    }
+    
     public func encode(with coder: NSCoder) {
         coder.encode(id, forKey: EncodingKeys.id)
         coder.encode(imageDescription, forKey: EncodingKeys.description)
@@ -37,17 +44,5 @@ public class CoreDataFeedImage: NSObject, NSCoding {
         static let description = "description"
         static let location = "location"
         static let url = "url"
-    }
-    
-    func toLocalFeedImage() -> LocalFeedImage? {
-        guard let id = id,
-              let imageUrl = url,
-              let uuid = UUID(uuidString: id),
-              let url = URL(string: imageUrl)
-        else { return nil }
-        return LocalFeedImage(id: uuid,
-                              description: imageDescription,
-                              location: location,
-                              url: url)
     }
 }
