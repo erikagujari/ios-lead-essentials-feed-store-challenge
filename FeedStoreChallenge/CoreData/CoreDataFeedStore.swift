@@ -48,7 +48,13 @@ private extension CoreDataFeedStore {
               let managedObjectModel = NSManagedObjectModel(contentsOf: url)
         else { return nil }
         
-        return NSPersistentContainer(name: fileName, managedObjectModel: managedObjectModel)
+        var container: NSPersistentContainer? = NSPersistentContainer(name: fileName, managedObjectModel: managedObjectModel)
+        container?.loadPersistentStores { (_, error) in
+            guard error != nil else { return }
+            container = nil
+        }
+        
+        return container
     }
     
     enum CoreDataError: Error {
