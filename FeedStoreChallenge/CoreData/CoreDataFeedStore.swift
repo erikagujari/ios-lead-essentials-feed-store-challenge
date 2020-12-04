@@ -11,7 +11,7 @@ public struct CoreDataFeedStore: FeedStore {
     let context: NSManagedObjectContext?
     
     public init() {
-        context = CoreDataFeedStore.container()?.newBackgroundContext()
+        context = CoreDataFeedStore.container?.newBackgroundContext()
     }
     
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
@@ -66,7 +66,7 @@ public struct CoreDataFeedStore: FeedStore {
 }
 
 private extension CoreDataFeedStore {
-    static func container() -> NSPersistentContainer? {
+    static var container: NSPersistentContainer? = {
         let fileName = "CoreDataFeed"
         guard let url = Bundle(for: CoreDataFeed.self).url(forResource: fileName, withExtension: "momd"),
               let managedObjectModel = NSManagedObjectModel(contentsOf: url)
@@ -79,7 +79,7 @@ private extension CoreDataFeedStore {
         }
         
         return container
-    }
+    }()
     
     enum CoreDataError: Error {
         case retrieveError
