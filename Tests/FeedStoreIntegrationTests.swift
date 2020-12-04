@@ -76,7 +76,7 @@ class FeedStoreIntegrationTests: XCTestCase {
     // - MARK: Helpers
     
     private func makeSUT() -> FeedStore {
-        fatalError("Must be implemented")
+        return CoreDataFeedStore()
     }
     
     private func setupEmptyStoreState() {
