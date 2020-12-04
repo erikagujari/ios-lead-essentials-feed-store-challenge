@@ -29,18 +29,21 @@ public struct CoreDataFeedStore: FeedStore {
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        guard let context = context
-        else {
-            completion(CoreDataError.insertionError)
-            return
+        deleteCachedFeed { error in
+            guard error == nil,
+                  let context = context
+            else {
+                completion(CoreDataError.insertionError)
+                return
+            }
+            
+            let coreDataImages = feed.map { CoreDataFeedImageMapper.fromLocalFeedImage($0) }
+            let coreDataFeed = CoreDataFeed(context: context)
+            coreDataFeed.images = coreDataImages
+            coreDataFeed.timestamp = timestamp
+            
+            save(context: context, errorCompletion: completion)
         }
-        
-        let coreDataImages = feed.map { CoreDataFeedImageMapper.fromLocalFeedImage($0) }
-        let coreDataFeed = CoreDataFeed(context: context)
-        coreDataFeed.images = coreDataImages
-        coreDataFeed.timestamp = timestamp
-        
-        save(context: context, errorCompletion: completion)
     }
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
