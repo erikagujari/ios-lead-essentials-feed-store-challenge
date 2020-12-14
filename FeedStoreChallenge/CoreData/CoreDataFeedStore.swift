@@ -48,7 +48,6 @@ public struct CoreDataFeedStore: FeedStore {
         deleteCachedFeed { error in
             guard error == nil
             else {
-                completion(CoreDataError.insertionError)
                 return
             }
             let coreDataFeed = CoreDataFeed(context: context)
@@ -85,9 +84,6 @@ public struct CoreDataFeedStore: FeedStore {
 private extension CoreDataFeedStore {    
     enum CoreDataError: Error {
         case loadError
-        case retrieveError
-        case insertionError
-        case deleteError
     }
     
     struct CoreDataFeedImageMapper {
