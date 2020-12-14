@@ -21,14 +21,12 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
     
 	func test_retrieve_deliversEmptyOnEmptyCache() {
 		let sut = makeSUT()
-        deleteCache(from: sut)
         
 		assertThatRetrieveDeliversEmptyOnEmptyCache(on: sut)
 	}
 
 	func test_retrieve_hasNoSideEffectsOnEmptyCache() {
 		let sut = makeSUT()
-        deleteCache(from: sut)
         
 		assertThatRetrieveHasNoSideEffectsOnEmptyCache(on: sut)
 	}
@@ -96,7 +94,6 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT() -> FeedStore {
-		return CoreDataFeedStore()
+        return try! CoreDataFeedStore(localURL: URL(fileURLWithPath: "/dev/null"))
 	}
-	
 }

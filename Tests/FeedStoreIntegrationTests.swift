@@ -76,7 +76,7 @@ class FeedStoreIntegrationTests: XCTestCase {
     // - MARK: Helpers
     
     private func makeSUT() -> FeedStore {
-        return CoreDataFeedStore()
+        return try! CoreDataFeedStore(localURL: URL(fileURLWithPath: "dev/null"))
     }
     
     private func setupEmptyStoreState() {
