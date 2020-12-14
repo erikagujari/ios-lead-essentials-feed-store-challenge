@@ -18,7 +18,7 @@ extension CoreDataFeed {
     }
 
     @NSManaged public var timestamp: Date?
-    @NSManaged public var images: NSSet?
+    @NSManaged public var images: NSOrderedSet?
 
 }
 
