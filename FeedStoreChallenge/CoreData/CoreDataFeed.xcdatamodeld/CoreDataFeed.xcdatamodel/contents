@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19H15" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CoreDataFeed" representedClassName="CoreDataFeed" syncable="YES">
-        <attribute name="images" attributeType="Transformable" customClassName="CoreDataFeedImage"/>
         <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
-    </entity>
-    <entity name="CoreDataFeedImage" representedClassName="CoreDataFeedImage" syncable="YES">
-        <attribute name="id" optional="YES" attributeType="String"/>
-        <attribute name="imageDescription" optional="YES" attributeType="String"/>
-        <attribute name="location" optional="YES" attributeType="String"/>
-        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CoreDataFeed"/>
     </entity>
     <elements>
-        <element name="CoreDataFeedImage" positionX="-63" positionY="-18" width="128" height="103"/>
         <element name="CoreDataFeed" positionX="-54" positionY="18" width="128" height="73"/>
     </elements>
 </model>

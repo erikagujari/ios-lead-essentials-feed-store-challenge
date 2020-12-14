@@ -36,10 +36,8 @@ public struct CoreDataFeedStore: FeedStore {
                 completion(CoreDataError.insertionError)
                 return
             }
-            
-            let coreDataImages = feed.map { CoreDataFeedImageMapper.fromLocalFeedImage($0) }
             let coreDataFeed = CoreDataFeed(context: context)
-            coreDataFeed.images = coreDataImages
+            feed.forEach { coreDataFeed.addToImages(CoreDataFeedImageMapper.fromLocalFeedImage($0, feed: coreDataFeed, context: context)) }
             coreDataFeed.timestamp = timestamp
             
             save(context: context, errorCompletion: completion)
@@ -55,13 +53,15 @@ public struct CoreDataFeedStore: FeedStore {
         }
         
         guard let coreDataFeed = fetch.first,
-              !coreDataFeed.images.isEmpty
+              let imageSet = coreDataFeed.images as? Set<CoreDataFeedImage>,
+              let timestamp = coreDataFeed.timestamp,
+              imageSet.count != 0
         else {
             completion(.empty)
             return
         }
         
-        completion(.found(feed: coreDataFeed.images.compactMap { CoreDataFeedImageMapper.toLocalFeedImage($0) }, timestamp: coreDataFeed.timestamp))
+        completion(.found(feed: imageSet.compactMap { CoreDataFeedImageMapper.toLocalFeedImage($0) }, timestamp: timestamp))
     }
 }
 
@@ -73,6 +73,7 @@ private extension CoreDataFeedStore {
         else { return nil }
         
         var container: NSPersistentContainer? = NSPersistentContainer(name: fileName, managedObjectModel: managedObjectModel)
+        
         container?.loadPersistentStores { (_, error) in
             guard error != nil else { return }
             container = nil
@@ -88,23 +89,20 @@ private extension CoreDataFeedStore {
     }
     
     struct CoreDataFeedImageMapper {
-        static func toLocalFeedImage(_ coreDataFeedImage: CoreDataFeedImage) -> LocalFeedImage? {
-            guard let id = coreDataFeedImage.id,
-                  let imageUrl = coreDataFeedImage.url,
-                  let uuid = UUID(uuidString: id),
-                  let url = URL(string: imageUrl)
-            else { return nil }
-            return LocalFeedImage(id: uuid,
+        static func toLocalFeedImage(_ coreDataFeedImage: CoreDataFeedImage) -> LocalFeedImage {
+            return LocalFeedImage(id: coreDataFeedImage.id,
                                   description: coreDataFeedImage.imageDescription,
                                   location: coreDataFeedImage.location,
-                                  url: url)
+                                  url: coreDataFeedImage.url)
         }
         
-        static func fromLocalFeedImage(_ localFeedImage: LocalFeedImage) -> CoreDataFeedImage {
-            return CoreDataFeedImage(id: localFeedImage.id.uuidString,
+        static func fromLocalFeedImage(_ localFeedImage: LocalFeedImage, feed: CoreDataFeed, context: NSManagedObjectContext) -> CoreDataFeedImage {
+            return CoreDataFeedImage(id: localFeedImage.id,
                                      imageDescription: localFeedImage.description,
                                      location: localFeedImage.location,
-                                     url: localFeedImage.url.absoluteString)
+                                     url: localFeedImage.url,
+                                     feed: feed,
+                                     context: context)
         }
     }
     
