@@ -2,9 +2,8 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19H15" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CoreDataFeed" representedClassName="CoreDataFeed" syncable="YES">
         <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CoreDataFeed"/>
     </entity>
     <elements>
-        <element name="CoreDataFeed" positionX="-54" positionY="18" width="128" height="73"/>
+        <element name="CoreDataFeed" positionX="-54" positionY="18" width="128" height="58"/>
     </elements>
 </model>
