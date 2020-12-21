@@ -65,15 +65,13 @@ public struct CoreDataFeedStore: FeedStore {
             do {
                 guard let fetch = try context.fetch(CoreDataFeed.fetchRequest()) as? [CoreDataFeed],
                       let coreDataFeed = fetch.first,
-                      let imageSet = coreDataFeed.images?.array as? [CoreDataFeedImage],
-                      let timestamp = coreDataFeed.timestamp,
-                      imageSet.count != 0
+                      let imageSet = coreDataFeed.images.array as? [CoreDataFeedImage]
                 else {
                     completion(.empty)
                     return
                 }
-                
-                completion(.found(feed: imageSet.compactMap { CoreDataFeedImageMapper.toLocalFeedImage($0) }, timestamp: timestamp))
+                let timestamp = coreDataFeed.timestamp
+                completion(.found(feed: imageSet.map { CoreDataFeedImageMapper.toLocalFeedImage($0) }, timestamp: timestamp))
             } catch let error {
                 completion(.failure(error))
             }
