@@ -44,17 +44,17 @@ public struct CoreDataFeedStore: FeedStore {
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
         deleteCachedFeed { error in
-            guard error == nil
-            else {
-                return
+            if let error = error {
+                completion(error)
+            } else {
+                let coreDataFeed = CoreDataFeed(context: context)
+                let coreDataFeedImages = feed.map { CoreDataFeedImageMapper.fromLocalFeedImage($0, feed: coreDataFeed, context: context)}
+                
+                coreDataFeed.images = NSOrderedSet(array: coreDataFeedImages)
+                coreDataFeed.timestamp = timestamp
+                
+                save(context: context, errorCompletion: completion)
             }
-            let coreDataFeed = CoreDataFeed(context: context)
-            let coreDataFeedImages = feed.map { CoreDataFeedImageMapper.fromLocalFeedImage($0, feed: coreDataFeed, context: context)}
-            
-            coreDataFeed.images = NSOrderedSet(array: coreDataFeedImages)
-            coreDataFeed.timestamp = timestamp
-            
-            save(context: context, errorCompletion: completion)
         }
     }
     
