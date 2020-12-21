@@ -105,7 +105,6 @@ private extension CoreDataFeedStore {
             try context.save()
             errorCompletion(nil)
         } catch {
-            print(error)
             errorCompletion(error)
         }
     }
