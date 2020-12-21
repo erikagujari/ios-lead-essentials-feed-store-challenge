@@ -87,7 +87,6 @@ class FeedStoreIntegrationTests: XCTestCase {
     }
     
     private func restoreCoreData() {
-        guard let store = try? CoreDataFeedStore(localURL: URL(fileURLWithPath: "dev/null")) else { return }
-        store.deleteCachedFeed(completion: { _ in })
+        deleteCache(from: makeSUT())
     }
 }
