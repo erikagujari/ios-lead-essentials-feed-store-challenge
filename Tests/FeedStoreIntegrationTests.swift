@@ -75,7 +75,7 @@ class FeedStoreIntegrationTests: XCTestCase {
     // - MARK: Helpers
     
     private func makeSUT() -> FeedStore {
-        return try! CoreDataFeedStore(localURL: URL(fileURLWithPath: "dev/null"))
+        return try! CoreDataFeedStore(localURL: testSpecificStoreURL())
     }
     
     private func setupEmptyStoreState() {
@@ -84,6 +84,14 @@ class FeedStoreIntegrationTests: XCTestCase {
 
     private func undoStoreSideEffects() {
         restoreCoreData()
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        return cachesDirectory().appendingPathComponent("\(type(of: self)).store")
+    }
+    
+    private func cachesDirectory() -> URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
     
     private func restoreCoreData() {
