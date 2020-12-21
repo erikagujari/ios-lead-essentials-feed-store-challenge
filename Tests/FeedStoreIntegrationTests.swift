@@ -32,7 +32,6 @@ class FeedStoreIntegrationTests: XCTestCase {
     
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
-        deleteCache(from: sut)
         expect(sut, toRetrieve: .empty)
     }
 
@@ -80,11 +79,15 @@ class FeedStoreIntegrationTests: XCTestCase {
     }
     
     private func setupEmptyStoreState() {
-
+        restoreCoreData()
     }
 
     private func undoStoreSideEffects() {
-
+        restoreCoreData()
     }
     
+    private func restoreCoreData() {
+        guard let store = try? CoreDataFeedStore(localURL: URL(fileURLWithPath: "dev/null")) else { return }
+        store.deleteCachedFeed(completion: { _ in })
+    }
 }
