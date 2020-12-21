@@ -31,9 +31,7 @@ public struct CoreDataFeedStore: FeedStore {
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         context.perform {
             do {
-                guard let fetch = try context.fetch(CoreDataFeed.fetchRequest()) as? [CoreDataFeed]
-                else { return }
-                
+                let fetch = try context.fetch(CoreDataFeed.fetchRequest()) as [NSManagedObject]
                 fetch.forEach { feed in
                     context.delete(feed)
                 }
