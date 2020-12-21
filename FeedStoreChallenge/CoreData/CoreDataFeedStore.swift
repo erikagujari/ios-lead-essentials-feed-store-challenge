@@ -8,7 +8,7 @@
 import CoreData
 
 public struct CoreDataFeedStore: FeedStore {
-    let context: NSManagedObjectContext
+    private let context: NSManagedObjectContext
     
     public init(localURL: URL) throws {
         let fileName = "CoreDataFeed"
