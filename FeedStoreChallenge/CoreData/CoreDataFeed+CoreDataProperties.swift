@@ -17,8 +17,8 @@ extension CoreDataFeed {
         return NSFetchRequest<CoreDataFeed>(entityName: "CoreDataFeed")
     }
 
-    @NSManaged public var timestamp: Date?
-    @NSManaged public var images: NSOrderedSet?
+    @NSManaged public var timestamp: Date
+    @NSManaged public var images: NSOrderedSet
 
 }
 
