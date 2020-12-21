@@ -11,20 +11,7 @@ public struct CoreDataFeedStore: FeedStore {
     private let context: NSManagedObjectContext
     
     public init(localURL: URL) throws {
-        let fileName = "CoreDataFeed"
-        guard let url = Bundle(for: CoreDataFeed.self).url(forResource: fileName, withExtension: "momd"),
-              let managedObjectModel = NSManagedObjectModel(contentsOf: url)
-        else { throw CoreDataError.loadError }
-        
-        let container: NSPersistentContainer = NSPersistentContainer(name: fileName, managedObjectModel: managedObjectModel)
-        container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: localURL)]
-        var persistentError: Error?
-        
-        container.loadPersistentStores { (_, error) in
-            persistentError = error
-        }
-        guard persistentError == nil else { throw CoreDataError.loadError }
-        
+        let container = try CoreDataFeedStore.managedContainer(forLocalURL: localURL)
         context = container.newBackgroundContext()
     }
     
@@ -107,5 +94,29 @@ private extension CoreDataFeedStore {
         } catch {
             errorCompletion(error)
         }
+    }
+    
+    static func managedObjectModel(fileName: String) throws -> NSManagedObjectModel {
+        guard let url = Bundle(for: CoreDataFeed.self).url(forResource: fileName, withExtension: "momd"),
+              let managedObjectModel = NSManagedObjectModel(contentsOf: url)
+        else { throw CoreDataError.loadError }
+        return managedObjectModel
+    }
+    
+    static func container() throws -> NSPersistentContainer {
+        let fileName = "CoreDataFeed"
+        return NSPersistentContainer(name: fileName, managedObjectModel: try CoreDataFeedStore.managedObjectModel(fileName: fileName))
+    }
+    
+    static func managedContainer(forLocalURL URL: URL) throws -> NSPersistentContainer {
+        let container = try CoreDataFeedStore.container()
+        container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: URL)]
+        var persistentError: Error?
+        
+        container.loadPersistentStores { (_, error) in
+            persistentError = error
+        }
+        guard persistentError == nil else { throw CoreDataError.loadError }
+        return container
     }
 }
